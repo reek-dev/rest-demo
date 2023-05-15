@@ -36,4 +36,7 @@ public class Organisation {
     @JsonIgnore
     private Set<User> users = new HashSet<>();
 
+    @ManyToMany(mappedBy = "organisations", fetch = FetchType.LAZY)
+    private Set<CourseCategory> courseCategories = new HashSet<>();
+
 }

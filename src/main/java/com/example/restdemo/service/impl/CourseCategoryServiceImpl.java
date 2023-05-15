@@ -16,9 +16,7 @@ public class CourseCategoryServiceImpl implements CourseCategoryService {
 
     @Override
     public CourseCategory createCourseCategory(CourseCategory newCourseCategory) {
-        if (courseCategoryRepository.existsByCategoryNameIgnoreCase(newCourseCategory.getCategoryName())) {
-            throw new CourseCategoryAlreadyExistsException(newCourseCategory.getCategoryName());
-        }
+
         return courseCategoryRepository.save(newCourseCategory);
     }
 

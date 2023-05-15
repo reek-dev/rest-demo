@@ -20,6 +20,8 @@ public interface UserService {
 
     public void saveUser(User instructor);
 
+    public void deleteUser(Long id);
+
 
 //    public UserDTO updateUser(UserDTO user);
 //

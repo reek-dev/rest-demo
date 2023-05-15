@@ -29,4 +29,13 @@ public class CourseCategory {
     @JsonManagedReference
     @JsonIgnore
     private Set<Course> courses = new HashSet<>();
+
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "org_cat",
+            joinColumns = @JoinColumn(name = "category_id"),
+            inverseJoinColumns = @JoinColumn(name = "organisation_id")
+    )
+    private Set<Organisation> organisations = new HashSet<>();
 }

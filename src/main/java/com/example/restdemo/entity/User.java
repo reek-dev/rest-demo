@@ -80,12 +80,7 @@ public class User {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
     private LocalDate joiningDate;
 
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(
-            name = "user_course",
-            joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(name = "course_id", referencedColumnName = "id")
-    )
+    @ManyToMany(mappedBy = "associatedUsers", fetch = FetchType.LAZY)
     private Set<Course> assignedCourses = new HashSet<>();
 
 }

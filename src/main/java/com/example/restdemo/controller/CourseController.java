@@ -1,7 +1,11 @@
 package com.example.restdemo.controller;
 
+import com.example.restdemo.dto.CourseCountResponseDTO;
+import com.example.restdemo.dto.CourseDTO;
+import com.example.restdemo.dto.CourseListDTO;
 import com.example.restdemo.entity.Course;
 import com.example.restdemo.entity.CourseCategory;
+import com.example.restdemo.entity.Organisation;
 import com.example.restdemo.entity.User;
 import com.example.restdemo.exception.NotATeacherException;
 import com.example.restdemo.service.CourseCategoryService;
@@ -9,6 +13,7 @@ import com.example.restdemo.service.CourseService;
 import com.example.restdemo.service.OrganizationService;
 import com.example.restdemo.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -35,76 +40,129 @@ public class CourseController {
     public ResponseEntity<String> createCourse(
             @RequestBody Course course,
             @RequestParam(name = "organisationId", required = false) Long orgId,
-            @RequestParam(name = "courseCategoryId", required = false) Long categoryId
-//            @RequestParam(name = "instructorIds", required = false) List<Long> instructorIds
+            @RequestParam(name = "courseCategoryId", required = false) Long categoryId,
+            @RequestParam(name = "instructorIds", required = false) List<Long> instructorIds
 
     ) {
-
-        System.out.println("course object that came in the request body: " + course);
-        System.out.println(orgId);
-        System.out.println(categoryId);
-
 
         if (orgId != null)
             course.setOrganisation(organizationService.getOrganizationById(orgId));
 
-        System.out.println("after setting the organisation: " + course);
-
         if (categoryId != null)
             course.setCategory(courseCategoryService.getCourseCategoryById(categoryId));
 
-        System.out.println("after setting the category: " + course);
+        Set<User> possibleInstructors = new HashSet<>();
+
+        if (instructorIds != null) {
+            for (Long id : instructorIds) {
+                User user = userService.getUserById(id);
+                if (!user.getRole().toString().equals("TEACHER"))
+                    throw new NotATeacherException(id);
+                else possibleInstructors.add(user);
+            }
+        }
+
+        if (!possibleInstructors.isEmpty())
+            course.setAssociatedUsers(possibleInstructors);
+
 
         Course newCourse = courseService.createCourse(course);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body("Course `" + newCourse.getCourseName() + "` is successfully created.");
     }
 
+    @GetMapping("/getCourseDetails/{courseId}")
+    public ResponseEntity<CourseDTO> getCourseDetailsById(
+            @PathVariable("courseId") Long courseId
+    ) {
+        CourseDTO courseDTO = courseService.getCourseDtoById(courseId);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Message", "Course details fetched successfully.");
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .headers(headers)
+                .body(courseDTO);
+    }
+
+    @GetMapping("/getCourseList/all/{organisationId}")
+    public ResponseEntity<List<CourseListDTO>> getCoursesByOrganisation(
+            @PathVariable("organisationId") Long organisationId
+    ) {
+
+        List<CourseListDTO> courseListDTO = courseService.fetchCoursesByOrgnisation(organisationId);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Message", "Course details fetched successfully.");
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .headers(headers)
+                .body(courseListDTO);
+
+    }
+
     @PostMapping("/create-category")
-    public ResponseEntity<String> createCourseCategory(@RequestBody CourseCategory courseCategory) {
+    public ResponseEntity<String> createCourseCategory(
+            @RequestBody CourseCategory courseCategory,
+            @RequestParam(value = "orgId", required = true) Long orgId
+            ) {
+
+        Set<Organisation> organisations = new HashSet<>();
+        Organisation organisation = organizationService.getOrganizationById(orgId);
+
+        organisations.add(organisation);
+
+        courseCategory.setOrganisations(organisations);
+
         CourseCategory newCourseCategory = courseCategoryService.createCourseCategory(courseCategory);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body("Category `" + newCourseCategory.getCategoryName() + "` was created.");
     }
 
-    @PutMapping("/{courseId}/assign-ins/{instructorId}")
-    public ResponseEntity<String> assignInstructorsToCourse(
-            @PathVariable("courseId") Long courseId,
-            @PathVariable("instructorId") Long instructorId
+    @GetMapping("/getCategoryAndCourseCount/all/{organisationId}")
+    public ResponseEntity<List<CourseCountResponseDTO>> fetchCourseCounts(
+            @PathVariable("organisationId") Long organisationId
     ) {
 
-        User instructor = userService.getUserById(instructorId);
-        Course course = courseService.getCourseById(courseId);
+        List<CourseCountResponseDTO> courseListDTO = courseService.getCourseCountByCategory(organisationId);
 
-        instructor.getAssignedCourses().add(course);
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Message", "Course details fetched successfully.");
 
-        userService.saveUser(instructor);
 
         return ResponseEntity.status(HttpStatus.OK)
-                .body("Instructor was successfully assigned.");
+                .headers(headers)
+                .body(courseListDTO);
     }
 
-//    @GetMapping("/getall/idandname")
-//    public ResponseEntity<List<CourseIdAndNameDTO>> getAllCourseIdAndName() {
-//        List<CourseIdAndNameDTO> users = courseService.getAllCourseIdAndName();
-//        return ResponseEntity.status(HttpStatus.OK).body(users);
-//    }
-//
-//    @GetMapping("/getall/list")
-//    public ResponseEntity<List<CoursesListDTO>> getAllCoursesList() {
-//        List<CoursesListDTO> users = courseService.getAllCoursesList();
-//        return ResponseEntity.status(HttpStatus.OK).body(users);
-//    }
-//
-//    @GetMapping("/getall/category")
-//    public ResponseEntity<List<CourseCategoryDTO>> getAllCourseCategories() {
-//
-//    }
-//
-//    // REST API: get a single course by id
-//    @GetMapping("/get/{id}")
-//    public ResponseEntity<CourseDTO> getCourseById(@PathVariable("id") Long id) {
-//        CourseDTO course = courseService.getCourseById(id);
-//        return ResponseEntity.status(HttpStatus.OK).body(course);
-//    }
+
+    @PutMapping("/update-ins/{courseId}")
+    public ResponseEntity<String> detachInstructorFromCourse(
+            @PathVariable("courseId") Long courseId,
+            @RequestParam(name = "instructorIds", required = true) List<Long> instructorIds
+    ) {
+
+        Course possibleCourse = courseService.getCourseById(courseId);
+
+        Set<User> possibleInstructors = new HashSet<>();
+
+        possibleCourse.setAssociatedUsers(possibleInstructors);
+
+        for (Long id : instructorIds) {
+            User possibleInstructor = userService.getUserById(id);
+            if (!possibleInstructor.getRole().toString().equals("TEACHER"))
+                throw new NotATeacherException(id);
+            else possibleInstructors.add(possibleInstructor);
+
+        }
+
+        if (!possibleInstructors.isEmpty())
+            possibleCourse.setAssociatedUsers(possibleInstructors);
+
+        courseService.saveCourse(possibleCourse);
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(String.format("Successfully updated the course with id: `%d`", courseId));
+    }
+
 }

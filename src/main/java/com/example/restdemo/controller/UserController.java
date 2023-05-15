@@ -1,6 +1,7 @@
 package com.example.restdemo.controller;
 
 
+import com.example.restdemo.dto.UserDTO;
 import com.example.restdemo.entity.User;
 import com.example.restdemo.exception.ResourceNotFoundException;
 import com.example.restdemo.service.CityService;
@@ -62,53 +63,14 @@ public class UserController {
     }
 
 
-//    /* RESTful APIs for retrieval */
-//
-//    // REST API: get all users []
-//    @GetMapping("/getall/idandname")
-//    public ResponseEntity<List<UserIdAndNameDTO>> getAllUserIdAndName() {
-//        List<UserIdAndNameDTO> users = userService.getAllUserIdAndName();
-//        return ResponseEntity.status(HttpStatus.OK).body(users);
-//    }
-//
-//
-//    // REST API: get all users []
-//    @GetMapping("/getall/list")
-//    public ResponseEntity<List<UsersListDTO>> getAllUsersList() {
-//        List<UsersListDTO> users = userService.getAllUsersList();
-//        return ResponseEntity.status(HttpStatus.OK).body(users);
-//    }
-//
-//    // REST API: get all users
-//    @GetMapping("/getall")
-//    public ResponseEntity<List<UserDTO>> getAllUsers() {
-//        List<UserDTO> users = userService.getAllUsers();
-//        return ResponseEntity.status(HttpStatus.OK).body(users);
-//    }
-//
-//    // REST API: get a single user by id
-//    @GetMapping("/get/{id}")
-//    public ResponseEntity<UserDTO> getUserById(@PathVariable("id") Long id) {
-//        UserDTO user = userService.getUserById(id);
-//        return ResponseEntity.status(HttpStatus.OK).body(user);
-//    }
-//
-//    // REST API: update a user
-//    @PutMapping("/update/{id}")
-//    public ResponseEntity<UserDTO> updateUser(
-//            @PathVariable("id") Long id,
-//            @RequestBody UserDTO user
-//            ) {
-//        user.setId(id);
-//        UserDTO updatedUser = userService.updateUser(user);
-//        return ResponseEntity.status(HttpStatus.OK).body(updatedUser);
-//    }
-//
-//    // REST API: delete a user
-//    @DeleteMapping("/delete/{id}")
-//    public ResponseEntity<String> deleteUser(@PathVariable("id") Long id) {
-//        userService.deleteUser(id);
-//        return ResponseEntity.status(HttpStatus.OK)
-//                .body(String.format("User with id: `%s` is successfully deleted.", String.valueOf(id)));
-//    }
+    @DeleteMapping("/delete/{userId}")
+    public ResponseEntity<String> deleteUser(
+            @PathVariable("userId") Long userId
+    ) {
+        userService.deleteUser(userId);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(String.format("User with id: `%d` is successfully deleted.", userId));
+    }
+
+
 }

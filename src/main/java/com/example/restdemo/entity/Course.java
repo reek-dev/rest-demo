@@ -42,7 +42,12 @@ public class Course {
     @JsonIgnore
     private CourseCategory category;
 
-    @ManyToMany(mappedBy = "assignedCourses", fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "user_course",
+            joinColumns = @JoinColumn(name = "course_id"),
+            inverseJoinColumns = @JoinColumn(name = "user_id")
+    )
     private Set<User> associatedUsers = new HashSet<>();
 
     @Column(name = "description", length = 500)

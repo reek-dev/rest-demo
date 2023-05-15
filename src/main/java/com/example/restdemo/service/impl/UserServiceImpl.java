@@ -68,6 +68,20 @@ public class UserServiceImpl implements UserService {
     public void saveUser(User user) {
         userRepository.save(user);
     }
+
+    @Override
+    public void deleteUser(Long id) {
+        User userToRemove = userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("User", "id", String.valueOf(id)));
+
+        userToRemove.setOrganisation(null);
+        userToRemove.setState(null);
+        userToRemove.setCity(null);
+        userToRemove.setAssignedCourses(null);
+
+        userRepository.deleteById(userToRemove.getId());
+
+    }
 //
 
 //    @Override
