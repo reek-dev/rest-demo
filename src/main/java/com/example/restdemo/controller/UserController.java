@@ -2,6 +2,7 @@ package com.example.restdemo.controller;
 
 
 import com.example.restdemo.dto.UserDTO;
+import com.example.restdemo.dto.UserDetailsDTO;
 import com.example.restdemo.entity.User;
 import com.example.restdemo.exception.ResourceNotFoundException;
 import com.example.restdemo.service.CityService;
@@ -9,6 +10,7 @@ import com.example.restdemo.service.CourseService;
 import com.example.restdemo.service.StateService;
 import com.example.restdemo.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -60,6 +62,20 @@ public class UserController {
         userService.createUser(user);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body("User is successfully created.");
+    }
+
+    @GetMapping("/getUserDetails/{userId}")
+    public ResponseEntity<UserDetailsDTO> getUserDetails(
+            @PathVariable("userId") Long userId
+    ) {
+        UserDetailsDTO userDetailsDtoById = userService.getUserDetailsDtoById(userId);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Message", "Course details fetched successfully.");
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .headers(headers)
+                .body(userDetailsDtoById);
     }
 
 

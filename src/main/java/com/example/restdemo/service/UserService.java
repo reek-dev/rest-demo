@@ -1,6 +1,7 @@
 package com.example.restdemo.service;
 
 
+import com.example.restdemo.dto.UserDetailsDTO;
 import com.example.restdemo.entity.User;
 
 
@@ -17,6 +18,8 @@ public interface UserService {
 //    public List<UserDTO> getAllUsers();
 
     public User getUserById(Long id);
+
+    public UserDetailsDTO getUserDetailsDtoById(Long id);
 
     public void saveUser(User instructor);
 

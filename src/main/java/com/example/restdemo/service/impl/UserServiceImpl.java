@@ -1,10 +1,12 @@
 package com.example.restdemo.service.impl;
 
+import com.example.restdemo.dto.UserDetailsDTO;
 import com.example.restdemo.entity.User;
 import com.example.restdemo.exception.EmailAlreadyExistsException;
 import com.example.restdemo.exception.InvalidEmailException;
 import com.example.restdemo.exception.PhoneNumberAlreadyExistsException;
 import com.example.restdemo.exception.ResourceNotFoundException;
+import com.example.restdemo.mapper.UserMapper;
 import com.example.restdemo.repository.UserRepository;
 import com.example.restdemo.service.UserService;
 import com.example.restdemo.util.EmailValidator;
@@ -62,6 +64,14 @@ public class UserServiceImpl implements UserService {
         return userRepository.findById(id)
                 .orElseThrow(() ->
                         new ResourceNotFoundException("User", "id", String.valueOf(id)));
+    }
+
+    @Override
+    public UserDetailsDTO getUserDetailsDtoById(Long id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("User", "id", String.valueOf(id)));
+        return UserMapper.mapToUserDetailsDTO(user);
     }
 
     @Override
