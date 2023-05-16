@@ -4,7 +4,7 @@ import com.example.restdemo.entity.City;
 import com.example.restdemo.entity.Organisation;
 import com.example.restdemo.entity.State;
 import com.example.restdemo.service.CityService;
-import com.example.restdemo.service.OrganizationService;
+import com.example.restdemo.service.OrganisationService;
 import com.example.restdemo.service.StateService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -18,7 +18,7 @@ public class AdressController {
 
     private final CityService cityService;
     private final StateService stateService;
-    private final OrganizationService organizationService;
+    private final OrganisationService organizationService;
 
 
     @PostMapping("/create-state")

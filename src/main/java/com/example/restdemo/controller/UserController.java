@@ -1,14 +1,12 @@
 package com.example.restdemo.controller;
 
 
+import com.example.restdemo.dto.UserByOrgDTO;
 import com.example.restdemo.dto.UserDTO;
 import com.example.restdemo.dto.UserDetailsDTO;
 import com.example.restdemo.entity.User;
 import com.example.restdemo.exception.ResourceNotFoundException;
-import com.example.restdemo.service.CityService;
-import com.example.restdemo.service.CourseService;
-import com.example.restdemo.service.StateService;
-import com.example.restdemo.service.UserService;
+import com.example.restdemo.service.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -29,6 +27,8 @@ public class UserController {
 
     private final StateService stateService;
 
+    private final OrganisationService organisationService;
+
     private final CourseService courseService;
 
     /* RESTful APIs for creation */
@@ -39,6 +39,7 @@ public class UserController {
             @RequestBody User user,
             @RequestParam(name = "stateId", required = false) Long stateId,
             @RequestParam(name = "cityId", required = false) Long cityId,
+            @RequestParam(name = "orgId", required = true) Long orgId,
             @RequestParam(name = "courseIds", required = false) List<Long> courseIds
 
     ) {
@@ -48,6 +49,9 @@ public class UserController {
 
         if (stateId != null)
             user.setState(stateService.getStateById(stateId));
+
+        if (orgId != null)
+            user.setOrganisation(organisationService.getOrganizationById(orgId));
 
         if (courseIds != null) {
             for (Long id : courseIds) {
@@ -76,6 +80,21 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK)
                 .headers(headers)
                 .body(userDetailsDtoById);
+    }
+
+    @GetMapping("/getUserList/all/{organisationId}")
+    public ResponseEntity<List<UserByOrgDTO>> getUserDetailsByOrg(
+            @PathVariable("organisationId") Long organisationId
+    ) {
+
+        List<UserByOrgDTO> userByOrgDTO = userService.getUserListByOrgDtoByOrgId(organisationId);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Message", "Course details fetched successfully.");
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .headers(headers)
+                .body(userByOrgDTO);
     }
 
 

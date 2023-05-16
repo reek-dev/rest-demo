@@ -1,5 +1,6 @@
 package com.example.restdemo.repository;
 
+import com.example.restdemo.entity.Course;
 import com.example.restdemo.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -18,5 +19,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Boolean existsByEmail(String email);
 
     Boolean existsByPhone(String phone);
+
+    @Query("select u from User u where u.organisation.id = :organizationId")
+    List<User> findUsersByOrganizationId(@Param("organizationId") Long organizationId);
 
 }

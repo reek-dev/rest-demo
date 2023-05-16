@@ -1,6 +1,7 @@
 package com.example.restdemo.service.impl;
 
 import com.example.restdemo.dto.UserDetailsDTO;
+import com.example.restdemo.dto.UserByOrgDTO;
 import com.example.restdemo.entity.User;
 import com.example.restdemo.exception.EmailAlreadyExistsException;
 import com.example.restdemo.exception.InvalidEmailException;
@@ -12,6 +13,9 @@ import com.example.restdemo.service.UserService;
 import com.example.restdemo.util.EmailValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -73,6 +77,15 @@ public class UserServiceImpl implements UserService {
                         new ResourceNotFoundException("User", "id", String.valueOf(id)));
         return UserMapper.mapToUserDetailsDTO(user);
     }
+
+    @Override
+    public List<UserByOrgDTO> getUserListByOrgDtoByOrgId(Long id) {
+        List<User> users = userRepository.findUsersByOrganizationId(id);
+        return users.stream()
+                .map(UserMapper::mapToUserByOrgDTO)
+                .collect(Collectors.toList());
+    }
+
 
     @Override
     public void saveUser(User user) {

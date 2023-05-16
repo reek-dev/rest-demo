@@ -4,13 +4,13 @@ import com.example.restdemo.entity.Organisation;
 import com.example.restdemo.exception.ResourceAlreadyExistsException;
 import com.example.restdemo.exception.ResourceNotFoundException;
 import com.example.restdemo.repository.OrganizationRepository;
-import com.example.restdemo.service.OrganizationService;
+import com.example.restdemo.service.OrganisationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class OrganizationServiceImpl implements OrganizationService {
+public class OrganisationServiceImpl implements OrganisationService {
 
     private final OrganizationRepository organisationRepository;
 

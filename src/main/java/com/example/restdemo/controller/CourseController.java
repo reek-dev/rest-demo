@@ -10,7 +10,7 @@ import com.example.restdemo.entity.User;
 import com.example.restdemo.exception.NotATeacherException;
 import com.example.restdemo.service.CourseCategoryService;
 import com.example.restdemo.service.CourseService;
-import com.example.restdemo.service.OrganizationService;
+import com.example.restdemo.service.OrganisationService;
 import com.example.restdemo.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
@@ -31,7 +31,7 @@ public class CourseController {
     private final CourseService courseService;
     private final CourseCategoryService courseCategoryService;
     private final UserService userService;
-    private final OrganizationService organizationService;
+    private final OrganisationService organizationService;
 
     /* RESTful APIs for creation */
 

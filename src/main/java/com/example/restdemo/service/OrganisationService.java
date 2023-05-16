@@ -2,7 +2,7 @@ package com.example.restdemo.service;
 
 import com.example.restdemo.entity.Organisation;
 
-public interface OrganizationService {
+public interface OrganisationService {
 
     public Organisation getOrganizationById(Long id);
 

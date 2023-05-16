@@ -2,8 +2,8 @@ package com.example.restdemo.service;
 
 
 import com.example.restdemo.dto.UserDetailsDTO;
+import com.example.restdemo.dto.UserByOrgDTO;
 import com.example.restdemo.entity.User;
-
 
 import java.util.List;
 
@@ -20,6 +20,8 @@ public interface UserService {
     public User getUserById(Long id);
 
     public UserDetailsDTO getUserDetailsDtoById(Long id);
+
+    public List<UserByOrgDTO> getUserListByOrgDtoByOrgId(Long id);
 
     public void saveUser(User instructor);
 

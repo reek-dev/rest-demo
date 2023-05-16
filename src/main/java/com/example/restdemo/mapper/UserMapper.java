@@ -1,5 +1,6 @@
 package com.example.restdemo.mapper;
 
+import com.example.restdemo.dto.UserByOrgDTO;
 import com.example.restdemo.dto.UserDetailsDTO;
 import com.example.restdemo.entity.User;
 
@@ -18,6 +19,17 @@ public class UserMapper {
                 user.getPhone(),
                 user.getGender().toString(),
                 user.getDob(),
+                user.getJoiningDate()
+        );
+    }
+
+    public static UserByOrgDTO mapToUserByOrgDTO(User user) {
+
+        return new UserByOrgDTO(
+                user.getId(),
+                user.getFirstName() + " " + user.getLastName(),
+                user.getEmail(),
+                user.getRole().toString(),
                 user.getJoiningDate()
         );
     }
