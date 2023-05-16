@@ -23,4 +23,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query("select u from User u where u.organisation.id = :organizationId")
     List<User> findUsersByOrganizationId(@Param("organizationId") Long organizationId);
 
+    @Query("select u.role, count(u) from User u where u.organisation.id = :orgId group by u.role")
+    List<Object[]> countUsersByRole(@Param("orgId") Long orgId);
+
 }

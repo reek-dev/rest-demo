@@ -1,5 +1,6 @@
 package com.example.restdemo.service.impl;
 
+import com.example.restdemo.dto.UserCountResponseDTO;
 import com.example.restdemo.dto.UserDetailsDTO;
 import com.example.restdemo.dto.UserByOrgDTO;
 import com.example.restdemo.entity.User;
@@ -84,6 +85,12 @@ public class UserServiceImpl implements UserService {
         return users.stream()
                 .map(UserMapper::mapToUserByOrgDTO)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<UserCountResponseDTO> getUserRoleCountByOrgId(Long id) {
+
+        return null;
     }
 
 

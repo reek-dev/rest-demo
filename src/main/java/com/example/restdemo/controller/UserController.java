@@ -2,10 +2,13 @@ package com.example.restdemo.controller;
 
 
 import com.example.restdemo.dto.UserByOrgDTO;
+import com.example.restdemo.dto.UserCountResponseDTO;
 import com.example.restdemo.dto.UserDTO;
 import com.example.restdemo.dto.UserDetailsDTO;
+import com.example.restdemo.entity.Role;
 import com.example.restdemo.entity.User;
 import com.example.restdemo.exception.ResourceNotFoundException;
+import com.example.restdemo.repository.UserRepository;
 import com.example.restdemo.service.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
@@ -13,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -22,6 +26,8 @@ import java.util.List;
 public class UserController {
 
     private final UserService userService;
+
+    private final UserRepository userRepository;
 
     private final CityService cityService;
 
@@ -75,7 +81,7 @@ public class UserController {
         UserDetailsDTO userDetailsDtoById = userService.getUserDetailsDtoById(userId);
 
         HttpHeaders headers = new HttpHeaders();
-        headers.add("Message", "Course details fetched successfully.");
+        headers.add("Message", "User details fetched successfully.");
 
         return ResponseEntity.status(HttpStatus.OK)
                 .headers(headers)
@@ -90,11 +96,38 @@ public class UserController {
         List<UserByOrgDTO> userByOrgDTO = userService.getUserListByOrgDtoByOrgId(organisationId);
 
         HttpHeaders headers = new HttpHeaders();
-        headers.add("Message", "Course details fetched successfully.");
+        headers.add("Message", "User details fetched successfully.");
 
         return ResponseEntity.status(HttpStatus.OK)
                 .headers(headers)
                 .body(userByOrgDTO);
+    }
+
+    @GetMapping("getRoleAndUserCount/all/{organisationId}")
+    public ResponseEntity<List<UserCountResponseDTO>> getUserRolesCountByOrgId(
+            @PathVariable("organisationId") Long organisationId
+    ) {
+
+        List<Object[]> roleCounts = userRepository.countUsersByRole(organisationId);
+
+        List<UserCountResponseDTO> list = new ArrayList<>();
+
+        for (Object[] roleCount : roleCounts) {
+
+            Role r = (Role) roleCount[0];
+            String role = r.toString();
+            Long count = (Long) roleCount[1];
+
+            UserCountResponseDTO dto = new UserCountResponseDTO(role, count);
+            list.add(dto);
+        }
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Message", "User role details fetched successfully.");
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .headers(headers)
+                .body(list);
     }
 
 
