@@ -50,6 +50,12 @@ public class Course {
     )
     private Set<User> associatedUsers = new HashSet<>();
 
+
+    @OneToMany(mappedBy = "course", fetch = FetchType.LAZY)
+    @JsonManagedReference
+    @JsonIgnore
+    private Set<Schedule> schedules = new HashSet<>();
+
     @Column(name = "description", length = 500)
     private String courseDescription;
 

@@ -4,6 +4,7 @@ import com.example.restdemo.util.GenderAttributeConverter;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -82,5 +83,11 @@ public class User {
 
     @ManyToMany(mappedBy = "associatedUsers", fetch = FetchType.LAZY)
     private Set<Course> assignedCourses = new HashSet<>();
+
+
+    @OneToMany(mappedBy = "instructor", fetch = FetchType.LAZY)
+    @JsonManagedReference
+    @JsonIgnore
+    private Set<Schedule> schedules = new HashSet<>();
 
 }

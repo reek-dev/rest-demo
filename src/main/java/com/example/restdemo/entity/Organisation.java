@@ -39,4 +39,11 @@ public class Organisation {
     @ManyToMany(mappedBy = "organisations", fetch = FetchType.LAZY)
     private Set<CourseCategory> courseCategories = new HashSet<>();
 
+
+    @OneToMany(mappedBy = "organisation", fetch = FetchType.LAZY)
+    @JsonManagedReference
+    @JsonIgnore
+    private Set<Schedule> schedules = new HashSet<>();
+
+
 }

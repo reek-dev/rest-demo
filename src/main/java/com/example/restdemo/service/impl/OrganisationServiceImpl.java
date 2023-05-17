@@ -3,7 +3,7 @@ package com.example.restdemo.service.impl;
 import com.example.restdemo.entity.Organisation;
 import com.example.restdemo.exception.ResourceAlreadyExistsException;
 import com.example.restdemo.exception.ResourceNotFoundException;
-import com.example.restdemo.repository.OrganizationRepository;
+import com.example.restdemo.repository.OrganisationRepository;
 import com.example.restdemo.service.OrganisationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class OrganisationServiceImpl implements OrganisationService {
 
-    private final OrganizationRepository organisationRepository;
+    private final OrganisationRepository organisationRepository;
 
     @Override
     public Organisation getOrganizationById(Long id) {
