@@ -16,6 +16,7 @@ import java.util.Set;
 @NoArgsConstructor
 @DynamicInsert
 @DynamicUpdate
+@Builder
 @Entity
 @Table(name = "state")
 public class State {

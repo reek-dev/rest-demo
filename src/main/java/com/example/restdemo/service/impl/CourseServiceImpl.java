@@ -4,19 +4,23 @@ package com.example.restdemo.service.impl;
 import com.example.restdemo.dto.CourseCountResponseDTO;
 import com.example.restdemo.dto.CourseDTO;
 import com.example.restdemo.dto.CourseListDTO;
-import com.example.restdemo.entity.Course;
-import com.example.restdemo.entity.CourseCategory;
-import com.example.restdemo.entity.User;
+import com.example.restdemo.dto.CreateCourseDTO;
+import com.example.restdemo.entity.*;
 import com.example.restdemo.exception.CourseAlreadyExistsException;
+import com.example.restdemo.exception.NotATeacherException;
+import com.example.restdemo.exception.ResourceAlreadyExistsException;
 import com.example.restdemo.exception.ResourceNotFoundException;
 import com.example.restdemo.mapper.CourseMapper;
 import com.example.restdemo.repository.CourseCategoryRepository;
 import com.example.restdemo.repository.CourseRepository;
+import com.example.restdemo.repository.OrganisationRepository;
 import com.example.restdemo.repository.UserRepository;
 import com.example.restdemo.service.CourseService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -30,15 +34,80 @@ public class CourseServiceImpl implements CourseService {
     private final CourseRepository courseRepository;
     private final UserRepository userRepository;
     private final CourseCategoryRepository courseCategoryRepository;
+    private final OrganisationRepository organisationRepository;
+
+//    @Override
+//    public Course createCourse(Course newCourse) {
+//
+//        if (courseRepository.existsByCourseNameIgnoreCase(newCourse.getCourseName())) {
+//            throw new CourseAlreadyExistsException(newCourse.getCourseName());
+//        }
+//
+//        return courseRepository.save(newCourse);
+//    }
 
     @Override
-    public Course createCourse(Course newCourse) {
+    public CreateCourseDTO createCourse(CreateCourseDTO courseDTO) {
 
-        if (courseRepository.existsByCourseNameIgnoreCase(newCourse.getCourseName())) {
-            throw new CourseAlreadyExistsException(newCourse.getCourseName());
+        Organisation organisation = organisationRepository.findById(courseDTO.getOrganisationId())
+                .orElseThrow(() -> new ResourceNotFoundException("Organisation", "id", String.valueOf(courseDTO.getOrganisationId())));
+
+        for (Course course : organisation.getCourses()) {
+            if (course.getCourseName().equals(courseDTO.getCourseName()))
+                throw new ResourceAlreadyExistsException("Course", "name", courseDTO.getCourseName());
         }
 
-        return courseRepository.save(newCourse);
+        CourseCategory category = courseCategoryRepository.findById(courseDTO.getCourseCategoryId())
+                .orElseThrow(() -> new ResourceNotFoundException("Category", "id", String.valueOf(courseDTO.getCourseCategoryId())));
+
+        Set<User> possibleInstructors = new HashSet<>();
+
+        for (Long id : courseDTO.getInstructorIds()) {
+            User user = userRepository.findById(id)
+                    .orElseThrow(() -> new ResourceNotFoundException("User", "id", String.valueOf(id)));
+            if (!user.getRole().toString().equals("TEACHER"))
+                throw new NotATeacherException(id);
+            else possibleInstructors.add(user);
+        }
+
+        String levelString = courseDTO.getCourseLevel().trim().toUpperCase();
+
+        CourseLevel level = switch (levelString) {
+            case "BEGINNER" -> CourseLevel.BEGINNER;
+            case "INTERMEDIATE" -> CourseLevel.INTERMEDIATE;
+            case "ADVANCED" -> CourseLevel.ADVANCED;
+            case "UG" -> CourseLevel.UG;
+            case "PG" -> CourseLevel.PG;
+            default -> null;
+        };
+
+        String formatString = courseDTO.getCourseFormat().trim().toUpperCase();
+
+        CourseFormat format = switch(formatString) {
+            case "ONLINE" -> CourseFormat.ONLINE;
+            case "OFFLINE" -> CourseFormat.OFFLINE;
+            case "HYBRID" -> CourseFormat.HYBRID;
+            default -> null;
+        };
+
+        Course newCourse = new Course();
+        newCourse.setOrganisation(organisation);
+        newCourse.setCourseName(courseDTO.getCourseName());
+        newCourse.setCategory(category);
+        newCourse.setAssociatedUsers(possibleInstructors);
+        newCourse.setCourseDescription(courseDTO.getCourseDescription());
+        newCourse.setCourseDuration(courseDTO.getCourseDuration());
+        newCourse.setCourseLevel(level);
+        newCourse.setCourseFees(courseDTO.getCourseFees());
+        newCourse.setEnrollment(courseDTO.getEnrollment());
+        newCourse.setPrerequisites(courseDTO.getPrerequisites());
+        newCourse.setCourseFormat(format);
+        newCourse.setStartDate(LocalDate.parse(courseDTO.getStartDate(), DateTimeFormatter.ofPattern("dd-MM-yyyy")));
+        newCourse.setEndDate(LocalDate.parse(courseDTO.getEndDate(), DateTimeFormatter.ofPattern("dd-MM-yyyy")));
+
+
+        courseRepository.save(newCourse);
+        return courseDTO;
     }
 
     //    @Override
