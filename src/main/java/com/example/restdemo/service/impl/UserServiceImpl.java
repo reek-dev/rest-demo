@@ -1,20 +1,26 @@
 package com.example.restdemo.service.impl;
 
+import com.example.restdemo.dto.CreateUserDTO;
 import com.example.restdemo.dto.UserCountResponseDTO;
 import com.example.restdemo.dto.UserDetailsDTO;
 import com.example.restdemo.dto.UserByOrgDTO;
-import com.example.restdemo.entity.User;
-import com.example.restdemo.exception.EmailAlreadyExistsException;
-import com.example.restdemo.exception.InvalidEmailException;
-import com.example.restdemo.exception.PhoneNumberAlreadyExistsException;
-import com.example.restdemo.exception.ResourceNotFoundException;
+import com.example.restdemo.entity.*;
+import com.example.restdemo.exception.*;
 import com.example.restdemo.mapper.UserMapper;
+import com.example.restdemo.repository.CityRepository;
+import com.example.restdemo.repository.OrganisationRepository;
+import com.example.restdemo.repository.StateRepository;
 import com.example.restdemo.repository.UserRepository;
 import com.example.restdemo.service.UserService;
+import com.example.restdemo.util.CaseConverter;
 import com.example.restdemo.util.EmailValidator;
+import com.example.restdemo.util.NameValidator;
+import com.example.restdemo.util.PhoneValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -24,23 +30,97 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
 
-    @Override
-    public User createUser(User newUser) {
-        if (userRepository.existsByEmail(newUser.getEmail())) {
-            throw new EmailAlreadyExistsException(newUser.getEmail());
-        }
+    private final OrganisationRepository organisationRepository;
 
-        if (!EmailValidator.isEmailValid(newUser.getEmail())) {
-            throw new InvalidEmailException(newUser.getEmail());
-        }
+    private final StateRepository stateRepository;
 
-        if (userRepository.existsByPhone(newUser.getPhone())) {
-            throw new PhoneNumberAlreadyExistsException(newUser.getPhone());
-        }
-        return userRepository.save(newUser);
-    }
+    private final CityRepository cityRepository;
+
+
 
 //    @Override
+//    public User createUser(User newUser) {
+//        if (userRepository.existsByEmail(newUser.getEmail())) {
+//            throw new EmailAlreadyExistsException(newUser.getEmail());
+//        }
+//
+//        if (!EmailValidator.isEmailValid(newUser.getEmail())) {
+//            throw new InvalidEmailException(newUser.getEmail());
+//        }
+//
+//        if (userRepository.existsByPhone(newUser.getPhone())) {
+//            throw new PhoneNumberAlreadyExistsException(newUser.getPhone());
+//        }
+//        return userRepository.save(newUser);
+//    }
+
+    @Override
+    public CreateUserDTO createUser(CreateUserDTO userDTO) {
+
+        if (!NameValidator.isNameValid(userDTO.getFirstName().trim()))
+            throw new InvalidNameException(userDTO.getFirstName().trim());
+
+        if (!NameValidator.isNameValid(userDTO.getLastName().trim()))
+            throw new InvalidNameException(userDTO.getLastName().trim());
+
+        if (!EmailValidator.isEmailValid(userDTO.getEmailAddress().trim().toLowerCase()))
+            throw new InvalidEmailException(userDTO.getEmailAddress());
+
+        if (!PhoneValidator.isPhoneValid(userDTO.getPhoneNumber().trim()))
+            throw new InvalidPhoneException(userDTO.getPhoneNumber());
+
+        Organisation organisation = organisationRepository.findById(userDTO.getOrganisationId())
+                .orElseThrow(() -> new ResourceNotFoundException("Organisation", "id", String.valueOf(userDTO.getOrganisationId())));
+
+        String roleString = userDTO.getRole().trim().toUpperCase();
+
+        Role role = switch (roleString) {
+            case "ADMIN" -> Role.ADMIN;
+            case "TEACHER" -> Role.TEACHER;
+            case "STUDENT" -> Role.STUDENT;
+            default -> null;
+        };
+
+        State state = stateRepository.findById(userDTO.getStateId())
+                .orElseThrow(() -> new ResourceNotFoundException("Organisation", "id", String.valueOf(userDTO.getStateId())));
+
+        City city = cityRepository.findById(userDTO.getCityId())
+                .orElseThrow(() -> new ResourceNotFoundException("Organisation", "id", String.valueOf(userDTO.getCityId())));
+
+
+        if (userRepository.existsByEmail(userDTO.getEmailAddress().trim().toLowerCase()))
+            throw new ResourceAlreadyExistsException("User", "email", userDTO.getEmailAddress());
+
+        if (userRepository.existsByPhone(userDTO.getPhoneNumber().trim()))
+            throw new ResourceAlreadyExistsException("User", "phone", userDTO.getPhoneNumber());
+
+        String genderString = userDTO.getGender().trim().toUpperCase();
+        Gender gender = switch (genderString) {
+            case "MALE" -> Gender.MALE;
+            case "FEMALE" -> Gender.FEMALE;
+            default -> null;
+        };
+
+        User user = new User();
+        user.setRole(role);
+        user.setOrganisation(organisation);
+        user.setState(state);
+        user.setCity(city);
+        user.setEmail(userDTO.getEmailAddress().trim().toLowerCase());
+        user.setPassword(userDTO.getPassword());
+        user.setFirstName(CaseConverter.convertToTitleCase(userDTO.getFirstName().trim()));
+        user.setLastName(CaseConverter.convertToTitleCase(userDTO.getLastName().trim()));
+        user.setPhone(userDTO.getPhoneNumber().trim());
+        user.setAddress(userDTO.getAddress().trim());
+        user.setGender(gender);
+        user.setDob(LocalDate.parse(userDTO.getDateOfBirth(), DateTimeFormatter.ofPattern("dd-MM-yyyy")));
+        user.setJoiningDate(LocalDate.parse(userDTO.getJoiningDate(), DateTimeFormatter.ofPattern("dd-MM-yyyy")));
+
+        userRepository.save(user);
+        return userDTO;
+    }
+
+    //    @Override
 //    public List<UserIdAndNameDTO> getAllUserIdAndName() {
 //        List<User> possibleUsers = userRepository.getAllUsers();
 //        return possibleUsers.stream()

@@ -1,6 +1,7 @@
 package com.example.restdemo.service;
 
 
+import com.example.restdemo.dto.CreateUserDTO;
 import com.example.restdemo.dto.UserCountResponseDTO;
 import com.example.restdemo.dto.UserDetailsDTO;
 import com.example.restdemo.dto.UserByOrgDTO;
@@ -10,7 +11,9 @@ import java.util.List;
 
 public interface UserService {
 
-    public User createUser(User newUser);
+//    public User createUser(User newUser);
+
+    public CreateUserDTO createUser(CreateUserDTO userDTO);
 
 //    public List<UserIdAndNameDTO> getAllUserIdAndName();
 //

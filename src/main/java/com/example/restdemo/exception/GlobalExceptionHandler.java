@@ -72,6 +72,36 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(exceptionDetail);
     }
 
+    @ExceptionHandler(InvalidPhoneException.class)
+    public ResponseEntity<ExceptionDetail> handleInvalidPhoneException(
+            InvalidPhoneException exception,
+            WebRequest request
+    ) {
+
+        ExceptionDetail exceptionDetail = new ExceptionDetail(
+                LocalDateTime.now(),
+                exception.getMessage(),
+                request.getDescription(false),
+                "PHONE_NOT_VALID"
+        );
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(exceptionDetail);
+    }
+
+    @ExceptionHandler(InvalidNameException.class)
+    public ResponseEntity<ExceptionDetail> handleInvalidNameException(
+            InvalidNameException exception,
+            WebRequest request
+    ) {
+
+        ExceptionDetail exceptionDetail = new ExceptionDetail(
+                LocalDateTime.now(),
+                exception.getMessage(),
+                request.getDescription(false),
+                "NAME_NOT_VALID"
+        );
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(exceptionDetail);
+    }
+
     @ExceptionHandler(PhoneNumberAlreadyExistsException.class)
     public ResponseEntity<ExceptionDetail> handlePhoneNumberAlreadyExistsException(
             PhoneNumberAlreadyExistsException exception,

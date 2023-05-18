@@ -1,10 +1,7 @@
 package com.example.restdemo.controller;
 
 
-import com.example.restdemo.dto.UserByOrgDTO;
-import com.example.restdemo.dto.UserCountResponseDTO;
-import com.example.restdemo.dto.UserDTO;
-import com.example.restdemo.dto.UserDetailsDTO;
+import com.example.restdemo.dto.*;
 import com.example.restdemo.entity.Role;
 import com.example.restdemo.entity.User;
 import com.example.restdemo.exception.ResourceNotFoundException;
@@ -40,38 +37,53 @@ public class UserController {
     /* RESTful APIs for creation */
 
     // REST API: create a user
+//    @PostMapping("/create")
+//    public ResponseEntity<String> createUser(
+//            @RequestBody User user,
+//            @RequestParam(name = "stateId", required = false) Long stateId,
+//            @RequestParam(name = "cityId", required = false) Long cityId,
+//            @RequestParam(name = "orgId", required = true) Long orgId,
+//            @RequestParam(name = "courseIds", required = false) List<Long> courseIds
+//
+//    ) {
+//
+//        if (cityId != null)
+//            user.setCity(cityService.getCityById(cityId));
+//
+//        if (stateId != null)
+//            user.setState(stateService.getStateById(stateId));
+//
+//        if (orgId != null)
+//            user.setOrganisation(organisationService.getOrganizationById(orgId));
+//
+//        if (courseIds != null) {
+//            for (Long id : courseIds) {
+//                if (courseService.getCourseById(id) == null) {
+//                    throw new ResourceNotFoundException("Course", "id", String.valueOf(id));
+//                } else {
+//                    user.getAssignedCourses().add(courseService.getCourseById(id));
+//                }
+//            }
+//        }
+//
+//        userService.createUser(user);
+//        return ResponseEntity.status(HttpStatus.CREATED)
+//                .body("User is successfully created.");
+//    }
+
     @PostMapping("/create")
     public ResponseEntity<String> createUser(
-            @RequestBody User user,
-            @RequestParam(name = "stateId", required = false) Long stateId,
-            @RequestParam(name = "cityId", required = false) Long cityId,
-            @RequestParam(name = "orgId", required = true) Long orgId,
-            @RequestParam(name = "courseIds", required = false) List<Long> courseIds
-
+           @RequestBody CreateUserDTO userDTO
     ) {
 
-        if (cityId != null)
-            user.setCity(cityService.getCityById(cityId));
+        CreateUserDTO user = userService.createUser(userDTO);
 
-        if (stateId != null)
-            user.setState(stateService.getStateById(stateId));
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Message", "User created successfully.");
 
-        if (orgId != null)
-            user.setOrganisation(organisationService.getOrganizationById(orgId));
-
-        if (courseIds != null) {
-            for (Long id : courseIds) {
-                if (courseService.getCourseById(id) == null) {
-                    throw new ResourceNotFoundException("Course", "id", String.valueOf(id));
-                } else {
-                    user.getAssignedCourses().add(courseService.getCourseById(id));
-                }
-            }
-        }
-
-        userService.createUser(user);
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body("User is successfully created.");
+        return ResponseEntity.status(HttpStatus.OK)
+                .headers(headers)
+                .body("User `" + user.getFirstName().trim() + " " + user.getLastName().trim() + "` successfully created.");
     }
 
     @GetMapping("/getUserDetails/{userId}")
