@@ -1,14 +1,8 @@
 package com.example.restdemo.controller;
 
-import com.example.restdemo.dto.CourseCountResponseDTO;
-import com.example.restdemo.dto.CourseDTO;
-import com.example.restdemo.dto.CourseListDTO;
-import com.example.restdemo.dto.CreateCourseDTO;
-import com.example.restdemo.entity.Course;
+import com.example.restdemo.dto.*;
 import com.example.restdemo.entity.CourseCategory;
 import com.example.restdemo.entity.Organisation;
-import com.example.restdemo.entity.User;
-import com.example.restdemo.exception.NotATeacherException;
 import com.example.restdemo.service.CourseCategoryService;
 import com.example.restdemo.service.CourseService;
 import com.example.restdemo.service.OrganisationService;
@@ -35,7 +29,7 @@ public class CourseController {
     private final OrganisationService organizationService;
 
     @PostMapping("/create")
-    public ResponseEntity<String> createCourse(
+    public ResponseEntity<ResponseDTO<String>> createCourse(
             @RequestBody CreateCourseDTO courseDTO
             ) {
         CreateCourseDTO course = courseService.createCourse(courseDTO);
@@ -43,13 +37,22 @@ public class CourseController {
         HttpHeaders headers = new HttpHeaders();
         headers.add("Message", "Course created successfully.");
 
+        ResponseDTO<String> response =
+                ResponseDTO.<String>builder()
+                        .status("Success")
+                        .statusCode(HttpStatus.CREATED.value())
+                        .message("Course created successfully")
+                        .data(String.format("Course `%s` is successfully created.", course.getCourseName().trim()))
+                        .build();
+
+
         return ResponseEntity.status(HttpStatus.CREATED)
                 .headers(headers)
-                .body("Course `" + course.getCourseName() + "` is successfully created.");
+                .body(response);
     }
 
     @GetMapping("/getCourseDetails/{courseId}")
-    public ResponseEntity<CourseDTO> getCourseDetailsById(
+    public ResponseEntity<ResponseDTO<CourseDTO>> getCourseDetailsById(
             @PathVariable("courseId") Long courseId
     ) {
         CourseDTO courseDTO = courseService.getCourseDtoById(courseId);
@@ -57,13 +60,21 @@ public class CourseController {
         HttpHeaders headers = new HttpHeaders();
         headers.add("Message", "Course details fetched successfully.");
 
+        ResponseDTO<CourseDTO> response =
+                ResponseDTO.<CourseDTO>builder()
+                        .status("Success")
+                        .statusCode(HttpStatus.OK.value())
+                        .message("Course details fetched successfully")
+                        .data(courseDTO)
+                        .build();
+
         return ResponseEntity.status(HttpStatus.OK)
                 .headers(headers)
-                .body(courseDTO);
+                .body(response);
     }
 
     @GetMapping("/getCourseList/all/{organisationId}")
-    public ResponseEntity<List<CourseListDTO>> getCoursesByOrganisation(
+    public ResponseEntity<ResponseDTO<List<CourseListDTO>>> getCoursesByOrganisation(
             @PathVariable("organisationId") Long organisationId
     ) {
 
@@ -72,9 +83,17 @@ public class CourseController {
         HttpHeaders headers = new HttpHeaders();
         headers.add("Message", "Course details fetched successfully.");
 
+        ResponseDTO<List<CourseListDTO>> response =
+                ResponseDTO.<List<CourseListDTO>>builder()
+                        .status("Success")
+                        .statusCode(HttpStatus.OK.value())
+                        .message("Course details fetched successfully")
+                        .data(courseListDTO)
+                        .build();
+
         return ResponseEntity.status(HttpStatus.OK)
                 .headers(headers)
-                .body(courseListDTO);
+                .body(response);
 
     }
 
@@ -97,7 +116,7 @@ public class CourseController {
     }
 
     @GetMapping("/getCategoryAndCourseCount/all/{organisationId}")
-    public ResponseEntity<List<CourseCountResponseDTO>> fetchCourseCounts(
+    public ResponseEntity<ResponseDTO<List<CourseCountResponseDTO>>> fetchCourseCounts(
             @PathVariable("organisationId") Long organisationId
     ) {
 
@@ -106,40 +125,18 @@ public class CourseController {
         HttpHeaders headers = new HttpHeaders();
         headers.add("Message", "Course details fetched successfully.");
 
+        ResponseDTO<List<CourseCountResponseDTO>> response =
+
+                ResponseDTO.<List<CourseCountResponseDTO>>builder()
+                        .status("Success")
+                        .statusCode(HttpStatus.OK.value())
+                        .message("Course details fetched successfully")
+                        .data(courseListDTO)
+                        .build();
 
         return ResponseEntity.status(HttpStatus.OK)
                 .headers(headers)
-                .body(courseListDTO);
-    }
-
-
-    @PutMapping("/update-ins/{courseId}")
-    public ResponseEntity<String> detachInstructorFromCourse(
-            @PathVariable("courseId") Long courseId,
-            @RequestParam(name = "instructorIds", required = true) List<Long> instructorIds
-    ) {
-
-        Course possibleCourse = courseService.getCourseById(courseId);
-
-        Set<User> possibleInstructors = new HashSet<>();
-
-        possibleCourse.setAssociatedUsers(possibleInstructors);
-
-        for (Long id : instructorIds) {
-            User possibleInstructor = userService.getUserById(id);
-            if (!possibleInstructor.getRole().toString().equals("TEACHER"))
-                throw new NotATeacherException(id);
-            else possibleInstructors.add(possibleInstructor);
-
-        }
-
-        if (!possibleInstructors.isEmpty())
-            possibleCourse.setAssociatedUsers(possibleInstructors);
-
-        courseService.saveCourse(possibleCourse);
-
-        return ResponseEntity.status(HttpStatus.OK)
-                .body(String.format("Successfully updated the course with id: `%d`", courseId));
+                .body(response);
     }
 
 }

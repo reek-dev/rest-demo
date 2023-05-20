@@ -1,10 +1,7 @@
 package com.example.restdemo.controller;
 
 
-import com.example.restdemo.dto.CreateUserDTO;
-import com.example.restdemo.dto.UserByOrgDTO;
-import com.example.restdemo.dto.UserCountResponseDTO;
-import com.example.restdemo.dto.UserDetailsDTO;
+import com.example.restdemo.dto.*;
 import com.example.restdemo.entity.Role;
 import com.example.restdemo.repository.UserRepository;
 import com.example.restdemo.service.*;
@@ -24,20 +21,15 @@ import java.util.List;
 public class UserController {
 
     private final UserService userService;
-
     private final UserRepository userRepository;
-
     private final CityService cityService;
-
     private final StateService stateService;
-
     private final OrganisationService organisationService;
-
     private final CourseService courseService;
 
     @PostMapping("/create")
-    public ResponseEntity<String> createUser(
-           @RequestBody CreateUserDTO userDTO
+    public ResponseEntity<ResponseDTO<String>> createUser(
+            @RequestBody CreateUserDTO userDTO
     ) {
 
         CreateUserDTO user = userService.createUser(userDTO);
@@ -45,13 +37,23 @@ public class UserController {
         HttpHeaders headers = new HttpHeaders();
         headers.add("Message", "User created successfully.");
 
+        ResponseDTO<String> response =
+
+                ResponseDTO.<String>builder()
+                        .status("Success")
+                        .statusCode(HttpStatus.CREATED.value())
+                        .message("User created successfully")
+                        .data(String.format("User `%s %s` is successfully created.", user.getFirstName().trim(), user.getLastName().trim()))
+                        .build();
+
+
         return ResponseEntity.status(HttpStatus.OK)
                 .headers(headers)
-                .body("User `" + user.getFirstName().trim() + " " + user.getLastName().trim() + "` successfully created.");
+                .body(response);
     }
 
     @GetMapping("/getUserDetails/{userId}")
-    public ResponseEntity<UserDetailsDTO> getUserDetails(
+    public ResponseEntity<ResponseDTO<UserDetailsDTO>> getUserDetails(
             @PathVariable("userId") Long userId
     ) {
         UserDetailsDTO userDetailsDtoById = userService.getUserDetailsDtoById(userId);
@@ -59,13 +61,21 @@ public class UserController {
         HttpHeaders headers = new HttpHeaders();
         headers.add("Message", "User details fetched successfully.");
 
+        ResponseDTO<UserDetailsDTO> response =
+                ResponseDTO.<UserDetailsDTO>builder()
+                        .status("Success")
+                        .statusCode(HttpStatus.OK.value())
+                        .message("User details fetched successfully.")
+                        .data(userDetailsDtoById)
+                        .build();
+
         return ResponseEntity.status(HttpStatus.OK)
                 .headers(headers)
-                .body(userDetailsDtoById);
+                .body(response);
     }
 
     @GetMapping("/getUserList/all/{organisationId}")
-    public ResponseEntity<List<UserByOrgDTO>> getUserDetailsByOrg(
+    public ResponseEntity<ResponseDTO<List<UserByOrgDTO>>> getUserDetailsByOrg(
             @PathVariable("organisationId") Long organisationId
     ) {
 
@@ -74,13 +84,21 @@ public class UserController {
         HttpHeaders headers = new HttpHeaders();
         headers.add("Message", "User details fetched successfully.");
 
+        ResponseDTO<List<UserByOrgDTO>> response =
+                ResponseDTO.<List<UserByOrgDTO>>builder()
+                        .status("Success")
+                        .statusCode(HttpStatus.OK.value())
+                        .message("User details fetched successfully.")
+                        .data(userByOrgDTO)
+                        .build();
+
         return ResponseEntity.status(HttpStatus.OK)
                 .headers(headers)
-                .body(userByOrgDTO);
+                .body(response);
     }
 
     @GetMapping("getRoleAndUserCount/all/{organisationId}")
-    public ResponseEntity<List<UserCountResponseDTO>> getUserRolesCountByOrgId(
+    public ResponseEntity<ResponseDTO<List<UserCountResponseDTO>>> getUserRolesCountByOrgId(
             @PathVariable("organisationId") Long organisationId
     ) {
 
@@ -101,9 +119,17 @@ public class UserController {
         HttpHeaders headers = new HttpHeaders();
         headers.add("Message", "User role details fetched successfully.");
 
+        ResponseDTO<List<UserCountResponseDTO>> response =
+                ResponseDTO.<List<UserCountResponseDTO>>builder()
+                        .status("Success")
+                        .statusCode(HttpStatus.OK.value())
+                        .message("User role details fetched successfully.")
+                        .data(list)
+                        .build();
+
         return ResponseEntity.status(HttpStatus.OK)
                 .headers(headers)
-                .body(list);
+                .body(response);
     }
 
 
