@@ -19,4 +19,8 @@ public class ScheduleDTO {
     private Long courseId;
     private Long instructorId;
 
+    @Override
+    public String toString() {
+        return String.format("[date: %s, time: %s]", this.date, this.time);
+    }
 }
