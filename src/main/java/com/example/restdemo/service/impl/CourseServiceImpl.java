@@ -36,16 +36,6 @@ public class CourseServiceImpl implements CourseService {
     private final CourseCategoryRepository courseCategoryRepository;
     private final OrganisationRepository organisationRepository;
 
-//    @Override
-//    public Course createCourse(Course newCourse) {
-//
-//        if (courseRepository.existsByCourseNameIgnoreCase(newCourse.getCourseName())) {
-//            throw new CourseAlreadyExistsException(newCourse.getCourseName());
-//        }
-//
-//        return courseRepository.save(newCourse);
-//    }
-
     @Override
     public CreateCourseDTO createCourse(CreateCourseDTO courseDTO) {
 
@@ -110,29 +100,6 @@ public class CourseServiceImpl implements CourseService {
         return courseDTO;
     }
 
-    //    @Override
-//    public List<CourseIdAndNameDTO> getAllCourseIdAndName() {
-//        List<Course> possibleCourses = courseRepository.getAllCourses();
-//        return possibleCourses.stream()
-//                .map(CourseMapper::mapToCourseIdAndNameDTO)
-//                .collect(Collectors.toList());
-//    }
-//
-//    @Override
-//    public List<CoursesListDTO> getAllCoursesList() {
-//        List<Course> possibleUsers = courseRepository.getAllCourses();
-//        return possibleUsers.stream()
-//                .map(CourseMapper::mapToCoursesListDTO)
-//                .collect(Collectors.toList());
-//    }
-//
-//    @Override
-//    public CourseDTO getCourseDTOById(Long id) {
-//        Course possibleExistingCourse = courseRepository.findById(id)
-//                .orElseThrow(() -> new ResourceNotFoundException("Course", "id", String.valueOf(id)));
-//        return CourseMapper.mapToCourseDTO(possibleExistingCourse);
-//    }
-//
     @Override
     public Course getCourseById(Long id) {
         return courseRepository.findById(id)

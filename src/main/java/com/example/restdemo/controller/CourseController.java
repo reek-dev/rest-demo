@@ -34,44 +34,6 @@ public class CourseController {
     private final UserService userService;
     private final OrganisationService organizationService;
 
-    /* RESTful APIs for creation */
-
-    // REST API: create a course
-//    @PostMapping("/create")
-//    public ResponseEntity<String> createCourse(
-//            @RequestBody Course course,
-//            @RequestParam(name = "organisationId", required = false) Long orgId,
-//            @RequestParam(name = "courseCategoryId", required = false) Long categoryId,
-//            @RequestParam(name = "instructorIds", required = false) List<Long> instructorIds
-//
-//    ) {
-//
-//        if (orgId != null)
-//            course.setOrganisation(organizationService.getOrganizationById(orgId));
-//
-//        if (categoryId != null)
-//            course.setCategory(courseCategoryService.getCourseCategoryById(categoryId));
-//
-//        Set<User> possibleInstructors = new HashSet<>();
-//
-//        if (instructorIds != null) {
-//            for (Long id : instructorIds) {
-//                User user = userService.getUserById(id);
-//                if (!user.getRole().toString().equals("TEACHER"))
-//                    throw new NotATeacherException(id);
-//                else possibleInstructors.add(user);
-//            }
-//        }
-//
-//        if (!possibleInstructors.isEmpty())
-//            course.setAssociatedUsers(possibleInstructors);
-//
-//
-//        Course newCourse = courseService.createCourse(course);
-//        return ResponseEntity.status(HttpStatus.CREATED)
-//                .body("Course `" + newCourse.getCourseName() + "` is successfully created.");
-//    }
-
     @PostMapping("/create")
     public ResponseEntity<String> createCourse(
             @RequestBody CreateCourseDTO courseDTO
