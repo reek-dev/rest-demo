@@ -1,12 +1,14 @@
 package com.example.restdemo.service.impl;
 
 import com.example.restdemo.dto.CreateFeedbackDTO;
+import com.example.restdemo.dto.FeedbackByOrganisationDTO;
 import com.example.restdemo.entity.Course;
 import com.example.restdemo.entity.Feedback;
 import com.example.restdemo.entity.Organisation;
 import com.example.restdemo.entity.User;
 import com.example.restdemo.exception.NotATeacherException;
 import com.example.restdemo.exception.ResourceNotFoundException;
+import com.example.restdemo.mapper.FeedbackMapper;
 import com.example.restdemo.repository.CourseRepository;
 import com.example.restdemo.repository.FeedbackRepository;
 import com.example.restdemo.repository.OrganisationRepository;
@@ -14,6 +16,9 @@ import com.example.restdemo.repository.UserRepository;
 import com.example.restdemo.service.FeedbackService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -50,5 +55,21 @@ public class FeedbackServiceImpl implements FeedbackService {
         feedbackRepository.save(feedback);
 
         return feedbackDTO;
+    }
+
+    @Override
+    public List<FeedbackByOrganisationDTO> fetchFeedbackByOrganisation(Long organisationId) {
+        List<Feedback> feedbacks = feedbackRepository.findFeedbacksByOrganisation(organisationId);
+        return feedbacks.stream()
+                .map(FeedbackMapper::mapToFeedbackByOrganisationDTO)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<FeedbackByOrganisationDTO> fetchFeedbackByInstructor(Long instructorId) {
+        List<Feedback> feedbacks = feedbackRepository.findFeedbackByInstructor(instructorId);
+        return feedbacks.stream()
+                .map(FeedbackMapper::mapToFeedbackByOrganisationDTO)
+                .collect(Collectors.toList());
     }
 }
