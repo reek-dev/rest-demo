@@ -12,4 +12,6 @@ public interface FeedbackService {
     public List<FeedbackByOrganisationDTO> fetchFeedbackByOrganisation(Long organisationId);
 
     public List<FeedbackByOrganisationDTO> fetchFeedbackByInstructor(Long instructorId);
+
+    public FeedbackByOrganisationDTO fetchFeedbackById(Long id);
 }

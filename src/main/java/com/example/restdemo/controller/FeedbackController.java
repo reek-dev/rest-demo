@@ -72,4 +72,21 @@ public class FeedbackController {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(response);
     }
+
+    @GetMapping("/getFeedback/{feedbackId}")
+    public ResponseEntity<ResponseDTO<FeedbackByOrganisationDTO>> fetchFeedbackById(
+            @PathVariable("feedbackId") Long feedbackId
+    ) {
+        FeedbackByOrganisationDTO feedbackByOrganisationDTO = feedbackService.fetchFeedbackById(feedbackId);
+
+        ResponseDTO<FeedbackByOrganisationDTO> response =
+                ResponseDTO.<FeedbackByOrganisationDTO>builder()
+                        .status("success")
+                        .statusCode(HttpStatus.OK.value())
+                        .message("feedbacks fetched successfully.")
+                        .data(feedbackByOrganisationDTO)
+                        .build();
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(response);
+    }
 }

@@ -72,4 +72,12 @@ public class FeedbackServiceImpl implements FeedbackService {
                 .map(FeedbackMapper::mapToFeedbackByOrganisationDTO)
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public FeedbackByOrganisationDTO fetchFeedbackById(Long id) {
+
+        Feedback feedback = feedbackRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Feedback", "id", String.valueOf(id)));
+        return FeedbackMapper.mapToFeedbackByOrganisationDTO(feedback);
+    }
 }
