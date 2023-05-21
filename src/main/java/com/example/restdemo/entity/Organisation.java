@@ -46,4 +46,10 @@ public class Organisation {
     private Set<Schedule> schedules = new HashSet<>();
 
 
+    @OneToMany(mappedBy = "organisation", fetch = FetchType.LAZY)
+    @JsonManagedReference
+    @JsonIgnore
+    private Set<Feedback> feedbacks = new HashSet<>();
+
+
 }

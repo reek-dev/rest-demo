@@ -1,5 +1,6 @@
 package com.example.restdemo.controller;
 
+import com.example.restdemo.dto.StateDTO;
 import com.example.restdemo.entity.City;
 import com.example.restdemo.entity.Organisation;
 import com.example.restdemo.entity.State;
@@ -10,6 +11,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/address")

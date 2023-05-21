@@ -90,4 +90,9 @@ public class User {
     @JsonIgnore
     private Set<Schedule> schedules = new HashSet<>();
 
+    @OneToMany(mappedBy = "instructor", fetch = FetchType.LAZY)
+    @JsonManagedReference
+    @JsonIgnore
+    private Set<Feedback> feedbacks = new HashSet<>();
+
 }
