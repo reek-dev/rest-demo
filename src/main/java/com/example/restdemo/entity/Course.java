@@ -60,6 +60,12 @@ public class Course {
     @OneToMany(mappedBy = "course", fetch = FetchType.LAZY)
     @JsonManagedReference
     @JsonIgnore
+    private Set<Assignment> assignments = new HashSet<>();
+
+
+    @OneToMany(mappedBy = "course", fetch = FetchType.LAZY)
+    @JsonManagedReference
+    @JsonIgnore
     private Set<Feedback> feedbacks = new HashSet<>();
 
     @Column(name = "description", length = 500)

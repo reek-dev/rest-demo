@@ -52,4 +52,10 @@ public class Organisation {
     private Set<Feedback> feedbacks = new HashSet<>();
 
 
+    @OneToMany(mappedBy = "organisation", fetch = FetchType.LAZY)
+    @JsonManagedReference
+    @JsonIgnore
+    private Set<Assignment> assignments = new HashSet<>();
+
+
 }
