@@ -52,13 +52,12 @@ public class ScheduleServiceImpl implements ScheduleService {
 
         LocalDate scheduleDate = LocalDate.parse(scheduleDTO.getDate(), DateTimeFormatter.ofPattern("dd-MM-yyyy"));
         LocalTime scheduleTime = LocalTime.parse(scheduleDTO.getTime(), DateTimeFormatter.ofPattern("HH:mm"));
-        LocalTime scheduleDuration = LocalTime.parse(scheduleDTO.getDuration(), DateTimeFormatter.ofPattern("HH:mm"));
 
         Schedule schedule = new Schedule();
         schedule.setOrganisation(organisation);
         schedule.setDate(scheduleDate);
         schedule.setTime(scheduleTime);
-        schedule.setDuration(scheduleDuration);
+        schedule.setDuration(scheduleDTO.getDuration());
         schedule.setCourse(course);
         schedule.setInstructor(user);
         scheduleRepository.save(schedule);

@@ -15,7 +15,7 @@ public class ScheduleMapper {
                 schedule.getCourse().getCourseName(),
                 schedule.getDate().format(DateTimeFormatter.ofPattern("dd-MM-yyyy")),
                 schedule.getTime().format(DateTimeFormatter.ofPattern("HH:mm")),
-                schedule.getDuration().format(DateTimeFormatter.ofPattern("HH:mm")),
+                schedule.getDuration(),
                 schedule.getInstructor().getFirstName() + " " + schedule.getInstructor().getLastName()
         );
     }
@@ -26,7 +26,7 @@ public class ScheduleMapper {
                 schedule.getId(),
                 schedule.getDate().format(DateTimeFormatter.ofPattern("dd-MM-yyyy")),
                 schedule.getTime().format(DateTimeFormatter.ofPattern("HH:mm")),
-                schedule.getDuration().format(DateTimeFormatter.ofPattern("HH:mm")),
+                schedule.getDuration(),
                 schedule.getCourse().getCourseName(),
                 schedule.getInstructor().getFirstName() + " " + schedule.getInstructor().getLastName()
         );

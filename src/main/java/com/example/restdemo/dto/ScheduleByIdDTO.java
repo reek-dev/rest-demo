@@ -15,7 +15,7 @@ public class ScheduleByIdDTO {
     private Long id;
     private String date;
     private String time;
-    private String duration;
+    private Integer duration;
     private String courseName;
     private String instructorName;
 }

@@ -15,7 +15,7 @@ public class ScheduleDTO {
     private Long organisationId;
     private String date;
     private String time;
-    private String duration;
+    private Integer duration;
     private Long courseId;
     private Long instructorId;
 

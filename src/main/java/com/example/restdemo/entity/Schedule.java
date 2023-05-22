@@ -43,7 +43,7 @@ public class Schedule {
     private LocalTime time;
 
     @Column(name = "scedule_duration")
-    private LocalTime duration;
+    private Integer duration;
 
 
     @ManyToOne(fetch = FetchType.LAZY)

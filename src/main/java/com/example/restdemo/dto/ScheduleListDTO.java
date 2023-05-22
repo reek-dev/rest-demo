@@ -16,6 +16,6 @@ public class ScheduleListDTO {
     private String courseName;
     private String date;
     private String time;
-    private String duration;
+    private Integer duration;
     private String instructorName;
 }
