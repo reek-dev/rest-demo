@@ -14,11 +14,11 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
     @Query("select c from Course c")
     List<Course> getAllCourses();
 
-//    @Query("select c.id, c.name from Course c")
-//    List<CourseIdAndNameDTO> getAllCoursesIdAndName();
-
     Boolean existsByCourseNameIgnoreCase(String name);
 
     @Query("select c from Course c where c.organisation.id = :organizationId")
     List<Course> findCoursesByOrganizationId(@Param("organizationId") Long organizationId);
+
+    @Query("select c from Course c join c.associatedUsers u where u.id = :instructorId")
+    List<Course> findCourseByInstructor(@Param("instructorId") Long instructorId);
 }

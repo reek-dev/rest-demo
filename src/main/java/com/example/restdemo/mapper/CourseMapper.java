@@ -1,6 +1,7 @@
 package com.example.restdemo.mapper;
 
 import com.example.restdemo.dto.CourseDTO;
+import com.example.restdemo.dto.CourseIdAndNameDTO;
 import com.example.restdemo.dto.CourseListDTO;
 import com.example.restdemo.entity.Course;
 import com.example.restdemo.entity.User;
@@ -56,5 +57,13 @@ public class CourseMapper {
                 course.getCourseFees()
         );
 
+    }
+
+    public static CourseIdAndNameDTO mapToCourseIdAndNameDTO(Course course) {
+
+        return CourseIdAndNameDTO.builder()
+                .courseId(course.getId())
+                .courseName(course.getCourseName())
+                .build();
     }
 }

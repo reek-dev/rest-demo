@@ -139,4 +139,22 @@ public class CourseController {
                 .body(response);
     }
 
+    @GetMapping("/getAllCourseIdAndName/{instructorId}")
+    public ResponseEntity<ResponseDTO<List<CourseIdAndNameDTO>>> fetchCourseByInstructor(
+            @PathVariable("instructorId") Long instructorId
+    ) {
+        List<CourseIdAndNameDTO> courseByInstructor = courseService.getCourseByInstructor(instructorId);
+
+        ResponseDTO<List<CourseIdAndNameDTO>> response =
+                ResponseDTO.<List<CourseIdAndNameDTO>>builder()
+                        .status("success")
+                        .statusCode(HttpStatus.OK.value())
+                        .message("courses fetched successfully.")
+                        .data(courseByInstructor)
+                        .build();
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(response);
+    }
+
 }

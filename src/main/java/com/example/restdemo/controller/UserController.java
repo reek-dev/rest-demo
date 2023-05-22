@@ -132,6 +132,26 @@ public class UserController {
                 .body(response);
     }
 
+    @GetMapping("/getAllUserIdAndFirstNameAndLastName/{organisationId}/{roleId}")
+    public ResponseEntity<ResponseDTO<List<UserIdAndNameDTO>>> getUserByOrganisationAndRole(
+            @PathVariable("organisationId") Long organisationId,
+            @PathVariable("roleId") int roleId
+    ) {
+
+        List<UserIdAndNameDTO> userIdAndNameByOrgAndRole = userService.getUserIdAndNameByOrgAndRole(organisationId, roleId);
+
+        ResponseDTO<List<UserIdAndNameDTO>> response =
+                ResponseDTO.<List<UserIdAndNameDTO>>builder()
+                        .status("success")
+                        .statusCode(HttpStatus.OK.value())
+                        .message("users fetched successfully")
+                        .data(userIdAndNameByOrgAndRole)
+                        .build();
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(response);
+    }
+
 
     @DeleteMapping("/delete/{userId}")
     public ResponseEntity<String> deleteUser(

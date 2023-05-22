@@ -1,9 +1,6 @@
 package com.example.restdemo.service.impl;
 
-import com.example.restdemo.dto.CreateUserDTO;
-import com.example.restdemo.dto.UserCountResponseDTO;
-import com.example.restdemo.dto.UserDetailsDTO;
-import com.example.restdemo.dto.UserByOrgDTO;
+import com.example.restdemo.dto.*;
 import com.example.restdemo.entity.*;
 import com.example.restdemo.exception.*;
 import com.example.restdemo.mapper.UserMapper;
@@ -130,6 +127,15 @@ public class UserServiceImpl implements UserService {
     public List<UserCountResponseDTO> getUserRoleCountByOrgId(Long id) {
 
         return null;
+    }
+
+    @Override
+    public List<UserIdAndNameDTO> getUserIdAndNameByOrgAndRole(Long organisationId, int roleId) {
+
+        List<User> usersByOrgAndRole = userRepository.findUsersByOrgAndRole(organisationId, Role.getRoleByOrdinal(roleId));
+        return usersByOrgAndRole.stream()
+                .map(UserMapper::mapToUserIdAndNameDTO)
+                .collect(Collectors.toList());
     }
 
 

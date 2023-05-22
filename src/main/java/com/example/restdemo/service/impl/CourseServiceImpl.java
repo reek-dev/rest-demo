@@ -1,10 +1,7 @@
 package com.example.restdemo.service.impl;
 
 
-import com.example.restdemo.dto.CourseCountResponseDTO;
-import com.example.restdemo.dto.CourseDTO;
-import com.example.restdemo.dto.CourseListDTO;
-import com.example.restdemo.dto.CreateCourseDTO;
+import com.example.restdemo.dto.*;
 import com.example.restdemo.entity.*;
 import com.example.restdemo.exception.CourseAlreadyExistsException;
 import com.example.restdemo.exception.NotATeacherException;
@@ -163,5 +160,21 @@ public class CourseServiceImpl implements CourseService {
         }
 
         return response;
+    }
+
+    @Override
+    public List<CourseIdAndNameDTO> getCourseByInstructor(Long instructorId) {
+
+        User user = userRepository.findById(instructorId)
+                .orElseThrow(() -> new ResourceNotFoundException("User", "id", String.valueOf(instructorId)));
+
+        if (!user.getRole().toString().equals("TEACHER"))
+            throw new NotATeacherException(instructorId);
+
+        List<Course> courseByInstructor = courseRepository.findCourseByInstructor(instructorId);
+
+        return courseByInstructor.stream()
+                .map(CourseMapper::mapToCourseIdAndNameDTO)
+                .collect(Collectors.toList());
     }
 }
