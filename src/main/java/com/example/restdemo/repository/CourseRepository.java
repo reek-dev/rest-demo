@@ -25,4 +25,7 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
     @Query("select c from Course c join c.feedbacks f where f.id = :feedbackId")
     Course fetchCourseDetailsByFeedback(@Param("feedbackId") Long feedbackId);
 
+    @Query("select count(c) from Course c where c.organisation.id = :organisationId")
+    Long countCoursesByOrganisation(@Param("organisationId") Long organisationId);
+
 }

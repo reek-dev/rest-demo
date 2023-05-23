@@ -12,7 +12,6 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UserDetailsDTO {
-
     private String Role;
     private Long StateId;
     private Long CityId;
