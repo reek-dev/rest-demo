@@ -98,6 +98,63 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
+    public CourseDTO updateCourse(CourseDTO courseDTO) {
+
+        Course course = courseRepository.findById(courseDTO.getCourseId())
+                .orElseThrow(() -> new ResourceNotFoundException("Course", "id", String.valueOf(courseDTO.getCourseId())));
+
+        CourseCategory category = courseCategoryRepository.findById(courseDTO.getCourseCategoryId())
+                .orElseThrow(() -> new ResourceNotFoundException("Category", "id", String.valueOf(courseDTO.getCourseCategoryId())));
+
+        String levelString = courseDTO.getCourseLevel().trim().toUpperCase();
+
+        CourseLevel level = switch (levelString) {
+            case "BEGINNER" -> CourseLevel.BEGINNER;
+            case "INTERMEDIATE" -> CourseLevel.INTERMEDIATE;
+            case "ADVANCED" -> CourseLevel.ADVANCED;
+            case "UG" -> CourseLevel.UG;
+            case "PG" -> CourseLevel.PG;
+            default -> null;
+        };
+
+        Set<User> possibleInstructors = new HashSet<>();
+
+        for (Long id : courseDTO.getInstructorId()) {
+            User user = userRepository.findById(id)
+                    .orElseThrow(() -> new ResourceNotFoundException("User", "id", String.valueOf(id)));
+            if (!user.getRole().toString().equals("TEACHER"))
+                throw new NotATeacherException(id);
+            else possibleInstructors.add(user);
+        }
+
+        String formatString = courseDTO.getCourseFormat().trim().toUpperCase();
+
+        CourseFormat format = switch(formatString) {
+            case "ONLINE" -> CourseFormat.ONLINE;
+            case "OFFLINE" -> CourseFormat.OFFLINE;
+            case "HYBRID" -> CourseFormat.HYBRID;
+            default -> null;
+        };
+
+        course.setCourseName(courseDTO.getCourseName());
+        course.setCategory(category);
+        course.setCourseDescription(courseDTO.getCourseDescription());
+        course.setCourseDuration(courseDTO.getCourseDuration());
+        course.setCourseLevel(level);
+        course.setCourseFees(courseDTO.getCourseFees());
+        course.setEnrollment(courseDTO.getEnrollment());
+        course.setPrerequisites(courseDTO.getPrerequisites());
+        course.setAssociatedUsers(possibleInstructors);
+        course.setCourseFormat(format);
+        course.setStartDate(LocalDate.parse(courseDTO.getStartDate(), DateTimeFormatter.ofPattern("dd-MM-yyyy")));
+        course.setEndDate(LocalDate.parse(courseDTO.getEndDate(), DateTimeFormatter.ofPattern("dd-MM-yyyy")));
+
+        Course updatedCourse = courseRepository.save(course);
+
+        return CourseMapper.mapToCourseDTO(updatedCourse);
+    }
+
+    @Override
     public Course getCourseById(Long id) {
         return courseRepository.findById(id)
                 .orElseThrow(() ->
@@ -133,6 +190,8 @@ public class CourseServiceImpl implements CourseService {
         return CourseMapper.mapToCourseDTO(course);
 
     }
+
+
 
     @Override
     public List<CourseListDTO> fetchCoursesByOrgnisation(Long organisationId) {

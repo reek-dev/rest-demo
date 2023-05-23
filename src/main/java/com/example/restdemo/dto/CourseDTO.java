@@ -1,9 +1,6 @@
 package com.example.restdemo.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -13,19 +10,20 @@ import java.util.Set;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class CourseDTO {
 
-    private Long CourseId;
-    private String CourseName;
-    private Long CourseCategoryId;
-    private String CourseDescription;
-    private String CourseDuration;
-    private String CourseLevel;
-    private Integer CourseFees;
-    private Integer Enrollment;
-    private String Prerequisites;
-    private Set<Long> InstructorId;
-    private String CourseFormat;
-    private LocalDate StartDate;
-    private LocalDate EndDate;
+    private Long courseId;
+    private String courseName;
+    private Long courseCategoryId;
+    private String courseDescription;
+    private Integer courseDuration;
+    private String courseLevel;
+    private Integer courseFees;
+    private Integer enrollment;
+    private String prerequisites;
+    private Set<Long> instructorId;
+    private String courseFormat;
+    private String startDate;
+    private String endDate;
 }

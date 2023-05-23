@@ -22,17 +22,13 @@ public class UserController {
 
     private final UserService userService;
     private final UserRepository userRepository;
-    private final CityService cityService;
-    private final StateService stateService;
-    private final OrganisationService organisationService;
-    private final CourseService courseService;
 
     @PostMapping("/create")
     public ResponseEntity<ResponseDTO<String>> createUser(
             @RequestBody CreateUserDTO userDTO
     ) {
 
-        CreateUserDTO user = userService.createUser(userDTO);
+        String userId = userService.createUser(userDTO);
 
         HttpHeaders headers = new HttpHeaders();
         headers.add("Message", "User created successfully.");
@@ -43,12 +39,33 @@ public class UserController {
                         .status("Success")
                         .statusCode(HttpStatus.CREATED.value())
                         .message("User created successfully")
-                        .data(String.format("User `%s %s` is successfully created.", user.getFirstName().trim(), user.getLastName().trim()))
+                        .data(userId)
                         .build();
 
 
         return ResponseEntity.status(HttpStatus.OK)
                 .headers(headers)
+                .body(response);
+    }
+
+
+    @PutMapping("/update/{userId}")
+    public ResponseEntity<ResponseDTO<String>> updateUser(
+            @PathVariable("userId") Long userId,
+            @RequestBody UserDTO userDTO
+    ) {
+        userDTO.setUserId(userId);
+        UserDTO updatedUser = userService.updateUser(userDTO);
+
+        ResponseDTO<String> response =
+                ResponseDTO.<String>builder()
+                        .status("success")
+                        .statusCode(HttpStatus.OK.value())
+                        .message("updated user successfully")
+                        .data(null)
+                        .build();
+
+        return ResponseEntity.status(HttpStatus.OK)
                 .body(response);
     }
 

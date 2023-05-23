@@ -34,7 +34,7 @@ public class UserServiceImpl implements UserService {
     private final CityRepository cityRepository;
 
     @Override
-    public CreateUserDTO createUser(CreateUserDTO userDTO) {
+    public String createUser(CreateUserDTO userDTO) {
 
         if (!NameValidator.isNameValid(userDTO.getFirstName().trim()))
             throw new InvalidNameException(userDTO.getFirstName().trim());
@@ -95,8 +95,68 @@ public class UserServiceImpl implements UserService {
         user.setDob(LocalDate.parse(userDTO.getDateOfBirth(), DateTimeFormatter.ofPattern("dd-MM-yyyy")));
         user.setJoiningDate(LocalDate.parse(userDTO.getJoiningDate(), DateTimeFormatter.ofPattern("dd-MM-yyyy")));
 
-        userRepository.save(user);
-        return userDTO;
+        User savedUser = userRepository.save(user);
+        return String.valueOf(savedUser.getId());
+    }
+
+
+    @Override
+    public UserDTO updateUser(UserDTO userDTO) {
+
+        User user = userRepository.findById(userDTO.getUserId())
+                .orElseThrow(() -> new ResourceNotFoundException("User", "id", String.valueOf(userDTO.getUserId())));
+
+        if (!NameValidator.isNameValid(userDTO.getFirstName().trim()))
+            throw new InvalidNameException(userDTO.getFirstName().trim());
+
+        if (!NameValidator.isNameValid(userDTO.getLastName().trim()))
+            throw new InvalidNameException(userDTO.getLastName().trim());
+
+        if (!EmailValidator.isEmailValid(userDTO.getEmailAddress().trim().toLowerCase()))
+            throw new InvalidEmailException(userDTO.getEmailAddress());
+
+        if (!PhoneValidator.isPhoneValid(userDTO.getPhoneNumber().trim()))
+            throw new InvalidPhoneException(userDTO.getPhoneNumber());
+
+        String roleString = userDTO.getRole().trim().toUpperCase();
+
+        Role role = switch (roleString) {
+            case "ADMIN" -> Role.ADMIN;
+            case "TEACHER" -> Role.TEACHER;
+            case "STUDENT" -> Role.STUDENT;
+            default -> null;
+        };
+
+        State state = stateRepository.findById(userDTO.getStateId())
+                .orElseThrow(() -> new ResourceNotFoundException("Organisation", "id", String.valueOf(userDTO.getStateId())));
+
+        City city = cityRepository.findById(userDTO.getCityId())
+                .orElseThrow(() -> new ResourceNotFoundException("Organisation", "id", String.valueOf(userDTO.getCityId())));
+
+        String genderString = userDTO.getGender().trim().toUpperCase();
+        Gender gender = switch (genderString) {
+            case "MALE" -> Gender.MALE;
+            case "FEMALE" -> Gender.FEMALE;
+            default -> null;
+        };
+
+
+        user.setRole(role);
+        user.setState(state);
+        user.setCity(city);
+        user.setAddress(userDTO.getAddress().trim());
+        user.setEmail(userDTO.getEmailAddress().trim().toLowerCase());
+        user.setPassword(userDTO.getPassword());
+        user.setFirstName(CaseConverter.convertToTitleCase(userDTO.getFirstName().trim()));
+        user.setLastName(CaseConverter.convertToTitleCase(userDTO.getLastName().trim()));
+        user.setPhone(userDTO.getPhoneNumber().trim());
+        user.setGender(gender);
+        user.setDob(LocalDate.parse(userDTO.getDateOfBirth(), DateTimeFormatter.ofPattern("dd-MM-yyyy")));
+        user.setJoiningDate(LocalDate.parse(userDTO.getJoiningDate(), DateTimeFormatter.ofPattern("dd-MM-yyyy")));
+
+        User updatedUser = userRepository.save(user);
+
+        return UserMapper.mapToUserDTO(updatedUser);
     }
 
 
@@ -114,6 +174,8 @@ public class UserServiceImpl implements UserService {
                         new ResourceNotFoundException("User", "id", String.valueOf(id)));
         return UserMapper.mapToUserDetailsDTO(user);
     }
+
+
 
     @Override
     public List<UserByOrgDTO> getUserListByOrgDtoByOrgId(Long id) {

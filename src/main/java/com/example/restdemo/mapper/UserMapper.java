@@ -1,9 +1,12 @@
 package com.example.restdemo.mapper;
 
 import com.example.restdemo.dto.UserByOrgDTO;
+import com.example.restdemo.dto.UserDTO;
 import com.example.restdemo.dto.UserDetailsDTO;
 import com.example.restdemo.dto.UserIdAndNameDTO;
 import com.example.restdemo.entity.User;
+
+import java.time.format.DateTimeFormatter;
 
 public class UserMapper {
 
@@ -22,6 +25,25 @@ public class UserMapper {
                 user.getDob(),
                 user.getJoiningDate()
         );
+    }
+
+    public static UserDTO mapToUserDTO(User user) {
+
+        return UserDTO.builder()
+                .userId(user.getId())
+                .role(user.getRole().toString())
+                .stateId(user.getState().getId())
+                .cityId(user.getCity().getId())
+                .address(user.getAddress())
+                .emailAddress(user.getEmail())
+                .password(user.getPassword())
+                .firstName(user.getFirstName())
+                .lastName(user.getLastName())
+                .phoneNumber(user.getPhone())
+                .gender(user.getGender().toString())
+                .dateOfBirth(user.getDob().format(DateTimeFormatter.ofPattern("dd-MM-yyyy")))
+                .joiningDate(user.getJoiningDate().format(DateTimeFormatter.ofPattern("dd-MM-yyyy")))
+                .build();
     }
 
     public static UserByOrgDTO mapToUserByOrgDTO(User user) {

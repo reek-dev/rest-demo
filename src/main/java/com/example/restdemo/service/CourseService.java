@@ -19,6 +19,8 @@ public interface CourseService {
 
     public CourseDTO getCourseDtoById(Long id);
 
+    public CourseDTO updateCourse(CourseDTO courseDTO);
+
     public List<CourseListDTO> fetchCoursesByOrgnisation(Long organisationId);
 
     public List<CourseCountResponseDTO> getCourseCountByCategory(Long organisationId);

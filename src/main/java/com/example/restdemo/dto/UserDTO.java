@@ -1,22 +1,25 @@
 package com.example.restdemo.dto;
 
-import com.example.restdemo.entity.*;
 
-import java.time.LocalDate;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
 
-public record UserDTO(
-        Long id,
-        Role role,
-        Organisation organisation,
-        State state,
-        City city,
-        String email,
-        String firstName,
-        String lastName,
-        String phone,
-        String address,
-        Gender gender,
-        LocalDate dob,
-        LocalDate joiningDate
-) {
+@Getter
+@Setter
+@Builder
+public class UserDTO {
+    private Long userId;
+    private String role;
+    private Long stateId;
+    private Long cityId;
+    private String address;
+    private String emailAddress;
+    private String password;
+    private String firstName;
+    private String lastName;
+    private String phoneNumber;
+    private String gender;
+    private String dateOfBirth;
+    private String joiningDate;
 }

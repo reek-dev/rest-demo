@@ -26,6 +26,8 @@ public class Organisation {
 
     private String name;
 
+    private String address;
+
     @OneToMany(mappedBy = "organisation", fetch = FetchType.LAZY)
     @JsonManagedReference
     @JsonIgnore

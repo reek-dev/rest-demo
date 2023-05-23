@@ -6,7 +6,6 @@ import com.example.restdemo.entity.Organisation;
 import com.example.restdemo.service.CourseCategoryService;
 import com.example.restdemo.service.CourseService;
 import com.example.restdemo.service.OrganisationService;
-import com.example.restdemo.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -25,7 +24,6 @@ public class CourseController {
 
     private final CourseService courseService;
     private final CourseCategoryService courseCategoryService;
-    private final UserService userService;
     private final OrganisationService organizationService;
 
     @PostMapping("/create")
@@ -155,6 +153,29 @@ public class CourseController {
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(response);
+    }
+
+    @PutMapping("update/{courseId}")
+    public ResponseEntity<ResponseDTO<String>> updateCourse(
+            @PathVariable("courseId") Long courseId,
+            @RequestBody CourseDTO courseDTO
+    ) {
+
+        courseDTO.setCourseId(courseId);
+
+        courseService.updateCourse(courseDTO);
+
+        ResponseDTO<String> response =
+                ResponseDTO.<String>builder()
+                        .status("success")
+                        .statusCode(HttpStatus.OK.value())
+                        .message("course updated successfully.")
+                        .data(null)
+                        .build();
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(response);
+
     }
 
 }
