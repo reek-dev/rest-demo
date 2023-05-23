@@ -22,7 +22,7 @@ public class CourseDTO {
     private Integer courseFees;
     private Integer enrollment;
     private String prerequisites;
-    private Set<Long> instructorId;
+    private Set<Long> instructorIds;
     private String courseFormat;
     private String startDate;
     private String endDate;

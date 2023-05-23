@@ -119,7 +119,7 @@ public class CourseServiceImpl implements CourseService {
 
         Set<User> possibleInstructors = new HashSet<>();
 
-        for (Long id : courseDTO.getInstructorId()) {
+        for (Long id : courseDTO.getInstructorIds()) {
             User user = userRepository.findById(id)
                     .orElseThrow(() -> new ResourceNotFoundException("User", "id", String.valueOf(id)));
             if (!user.getRole().toString().equals("TEACHER"))
