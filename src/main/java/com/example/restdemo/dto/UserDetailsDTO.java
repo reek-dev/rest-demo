@@ -18,6 +18,7 @@ public class UserDetailsDTO {
     private Long CityId;
     private String Address;
     private String EmailAddress;
+    private String password;
     private String FirstName;
     private String LastName;
     private String PhoneNumber;
