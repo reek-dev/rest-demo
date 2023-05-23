@@ -2,6 +2,7 @@ package com.example.restdemo.service;
 
 import com.example.restdemo.dto.CreateFeedbackDTO;
 import com.example.restdemo.dto.FeedbackByOrganisationDTO;
+import com.example.restdemo.dto.FeedbackDTO;
 
 import java.util.List;
 
@@ -14,4 +15,6 @@ public interface FeedbackService {
     public List<FeedbackByOrganisationDTO> fetchFeedbackByInstructor(Long instructorId);
 
     public FeedbackByOrganisationDTO fetchFeedbackById(Long id);
+
+    public FeedbackDTO updateFeedback(FeedbackDTO feedbackDTO);
 }

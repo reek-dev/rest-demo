@@ -155,7 +155,27 @@ public class CourseController {
                 .body(response);
     }
 
-    @PutMapping("update/{courseId}")
+
+    @GetMapping("/getCourseDetailsByFeedback/{feedbackId}")
+    public ResponseEntity<ResponseDTO<CourseByFeedbackDTO>> fetchCourseByFeedback(
+            @PathVariable("feedbackId") Long feedbackId
+    ) {
+
+        CourseByFeedbackDTO courseByFeedback = courseService.getCourseByFeedback(feedbackId);
+
+        ResponseDTO<CourseByFeedbackDTO> response =
+                ResponseDTO.<CourseByFeedbackDTO>builder()
+                        .status("success")
+                        .statusCode(HttpStatus.OK.value())
+                        .message("course fetched successfully")
+                        .data(courseByFeedback)
+                        .build();
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(response);
+    }
+
+    @PutMapping("/update/{courseId}")
     public ResponseEntity<ResponseDTO<String>> updateCourse(
             @PathVariable("courseId") Long courseId,
             @RequestBody CourseDTO courseDTO

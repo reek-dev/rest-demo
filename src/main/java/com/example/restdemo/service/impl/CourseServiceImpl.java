@@ -236,4 +236,10 @@ public class CourseServiceImpl implements CourseService {
                 .map(CourseMapper::mapToCourseIdAndNameDTO)
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public CourseByFeedbackDTO getCourseByFeedback(Long feedbackId) {
+        Course course = courseRepository.fetchCourseDetailsByFeedback(feedbackId);
+        return CourseMapper.mapToCourseByFeedbackDTO(course);
+    }
 }

@@ -27,4 +27,6 @@ public interface CourseService {
 
     public List<CourseIdAndNameDTO> getCourseByInstructor(Long instructorId);
 
+    public CourseByFeedbackDTO getCourseByFeedback(Long feedbackId);
+
 }

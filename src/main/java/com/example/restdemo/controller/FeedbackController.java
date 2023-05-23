@@ -2,6 +2,7 @@ package com.example.restdemo.controller;
 
 import com.example.restdemo.dto.CreateFeedbackDTO;
 import com.example.restdemo.dto.FeedbackByOrganisationDTO;
+import com.example.restdemo.dto.FeedbackDTO;
 import com.example.restdemo.dto.ResponseDTO;
 import com.example.restdemo.service.FeedbackService;
 import lombok.RequiredArgsConstructor;
@@ -86,6 +87,29 @@ public class FeedbackController {
                         .message("feedbacks fetched successfully.")
                         .data(feedbackByOrganisationDTO)
                         .build();
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(response);
+    }
+
+
+    @PutMapping("/update/{feedbackId}")
+    public ResponseEntity<ResponseDTO<String>> updateFeedback(
+            @PathVariable("feedbackId") Long feedbackId,
+            @RequestBody FeedbackDTO feedbackDTO
+    ) {
+
+        feedbackDTO.setFeedbackId(feedbackId);
+
+        feedbackService.updateFeedback(feedbackDTO);
+
+        ResponseDTO<String> response =
+                ResponseDTO.<String>builder()
+                        .status("success")
+                        .statusCode(HttpStatus.OK.value())
+                        .message("feedback updated successfully")
+                        .data(null)
+                        .build();
+
         return ResponseEntity.status(HttpStatus.OK)
                 .body(response);
     }

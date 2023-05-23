@@ -2,6 +2,7 @@ package com.example.restdemo.service.impl;
 
 import com.example.restdemo.dto.CreateFeedbackDTO;
 import com.example.restdemo.dto.FeedbackByOrganisationDTO;
+import com.example.restdemo.dto.FeedbackDTO;
 import com.example.restdemo.entity.Course;
 import com.example.restdemo.entity.Feedback;
 import com.example.restdemo.entity.Organisation;
@@ -79,5 +80,30 @@ public class FeedbackServiceImpl implements FeedbackService {
         Feedback feedback = feedbackRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Feedback", "id", String.valueOf(id)));
         return FeedbackMapper.mapToFeedbackByOrganisationDTO(feedback);
+    }
+
+    @Override
+    public FeedbackDTO updateFeedback(FeedbackDTO feedbackDTO) {
+
+        Feedback feedback = feedbackRepository.findById(feedbackDTO.getFeedbackId())
+                .orElseThrow(() -> new ResourceNotFoundException("Feedback", "id", String.valueOf(feedbackDTO.getFeedbackId())));
+
+        User user = userRepository.findById(feedbackDTO.getInstructorId())
+                .orElseThrow(() -> new ResourceNotFoundException("User", "id", String.valueOf(feedbackDTO.getInstructorId())));
+
+        if (!user.getRole().toString().equals("TEACHER"))
+            throw new NotATeacherException(feedbackDTO.getInstructorId());
+
+        Course course = courseRepository.findById(feedbackDTO.getCourseId())
+                .orElseThrow(() -> new ResourceNotFoundException("Feedback", "id", String.valueOf(feedbackDTO.getCourseId())));
+
+        feedback.setInstructor(user);
+        feedback.setRating(feedbackDTO.getRating());
+        feedback.setCourse(course);
+        feedback.setReview(feedbackDTO.getReview());
+
+
+        Feedback updatedFeedback = feedbackRepository.save(feedback);
+        return FeedbackMapper.mapToFeedbackDTO(updatedFeedback);
     }
 }

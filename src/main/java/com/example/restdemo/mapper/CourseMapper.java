@@ -1,9 +1,6 @@
 package com.example.restdemo.mapper;
 
-import com.example.restdemo.dto.CourseDTO;
-import com.example.restdemo.dto.CourseIdAndNameDTO;
-import com.example.restdemo.dto.CourseListDTO;
-import com.example.restdemo.dto.CreateCourseDTO;
+import com.example.restdemo.dto.*;
 import com.example.restdemo.entity.Course;
 import com.example.restdemo.entity.User;
 
@@ -90,6 +87,22 @@ public class CourseMapper {
         return CourseIdAndNameDTO.builder()
                 .courseId(course.getId())
                 .courseName(course.getCourseName())
+                .build();
+    }
+
+    public static CourseByFeedbackDTO mapToCourseByFeedbackDTO(Course course) {
+
+        Set<String> instructor = new HashSet<>();
+        for (User user : course.getAssociatedUsers()) {
+            if (user.getRole().toString().equals("TEACHER"))
+                instructor.add(user.getFirstName() + " " + user.getLastName());
+        }
+
+        return CourseByFeedbackDTO.builder()
+                .courseName(course.getCourseName())
+                .instructorName(instructor)
+                .courseDescription(course.getCourseDescription())
+                .courseFee(course.getCourseFees())
                 .build();
     }
 }
