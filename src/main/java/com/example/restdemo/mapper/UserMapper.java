@@ -13,7 +13,7 @@ public class UserMapper {
     public static UserDetailsDTO mapToUserDetailsDTO(User user) {
 
         return new UserDetailsDTO(
-                user.getRole().ordinal(),
+                user.getRole().toString(),
                 user.getState().getId(),
                 user.getCity().getId(),
                 user.getAddress(),

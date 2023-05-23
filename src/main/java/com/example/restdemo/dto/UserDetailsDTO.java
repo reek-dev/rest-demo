@@ -13,7 +13,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 public class UserDetailsDTO {
 
-    private Integer RoleId;
+    private String Role;
     private Long StateId;
     private Long CityId;
     private String Address;
